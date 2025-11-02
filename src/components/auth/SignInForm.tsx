@@ -20,21 +20,25 @@ export default function SignInForm() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5173/api/login.php", {
+      const res = await fetch("http://localhost/wbadmin/api/login.php", {
         method: "POST",
         credentials: "include", // <-- VERY IMPORTANT (for PHP sessions)
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      debugger;
+      
       const data = await res.json();
       
       if (!data.success) {
         setError(data.message || "Invalid login");
         return;
       }
+      else{
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/");
+      }
 
-      navigate("/"); // ✅ go dashboard
+      return;
     } catch (err) {
       setError("Server error. Try again later.");
     }

@@ -5,7 +5,7 @@ export default function ProtectedRoute() {
   const [auth, setAuth] = useState<null | boolean>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5173/api/check_session.php", {
+    fetch("http://localhost/wbadmin/api/check_session.php", {
       credentials: "include",
     })
       .then((res) => res.json())
