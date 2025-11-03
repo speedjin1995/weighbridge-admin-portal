@@ -3,20 +3,19 @@ import { Link, useLocation } from "react-router-dom";
 
 // Assume these icons are imported from an icon library
 import {
-  BoxCubeIcon,
-  CalenderIcon,
+  //BoxCubeIcon,
+  //CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
+  //PageIcon,
+  //PieChartIcon,
+  //PlugInIcon,
   TableIcon,
-  UserCircleIcon,
+  //UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -32,36 +31,39 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "calendar",
+    icon: <ListIcon />,
+    name: "Companies",
+    path: "companies",
   },
-  {
+  /*{
     icon: <UserCircleIcon />,
     name: "User Profile",
     path: "profile",
-  },
-  {
+  },*/
+  /*{
     name: "Forms",
     icon: <ListIcon />,
     subItems: [{ name: "Form Elements", path: "form-elements", pro: false }],
-  },
+  },*/
   {
-    name: "Tables",
+    name: "Master Data",
     icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "basic-tables", pro: false }],
+    subItems: [
+      { name: "Products", path: "products", pro: false },
+      { name: "Users", path: "users", pro: false }
+    ],
   },
-  {
+  /*{
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
       { name: "Blank Page", path: "blank", pro: false },
       { name: "404 Error", path: "error-404", pro: false },
     ],
-  },
+  },*/
 ];
 
-const othersItems: NavItem[] = [
+/*const othersItems: NavItem[] = [
   {
     icon: <PieChartIcon />,
     name: "Charts",
@@ -90,7 +92,7 @@ const othersItems: NavItem[] = [
       { name: "Sign Up", path: "signup", pro: false },
     ],
   },
-];
+];*/
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -113,8 +115,10 @@ const AppSidebar: React.FC = () => {
 
   useEffect(() => {
     let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
+    //["main", "others"].forEach((menuType) => {
+    ["main"].forEach((menuType) => {
+      //const items = menuType === "main" ? navItems : othersItems;
+      const items = navItems;
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -350,22 +354,25 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div>
+            {/*
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                    !isExpanded && !isHovered
+                      ? "lg:justify-center"
+                      : "justify-start"
+                  }`}
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Others"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+
+                {renderMenuItems(othersItems, "others")}
+              </div>
+            */}
           </div>
         </nav>
         {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
