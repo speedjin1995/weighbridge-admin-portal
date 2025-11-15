@@ -1,10 +1,24 @@
 <?php
+// MUST be first — CORS headers
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+
+// Handle preflight before anything else
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header("Content-Length: 0"); 
+    header("Access-Control-Allow-Headers: Content-Type");
+    http_response_code(204);
+    exit(0);
+}
+
 require_once 'session.php';
 require_once 'db_connect.php';
 
-echo json_encode($_SESSION);
+header("Content-Type: application/json; charset=UTF-8");
 
-/*if (!isset($_SESSION['userID'])) {
+if (!isset($_SESSION['userID'])) {
     http_response_code(401);
     echo json_encode(["status" => "error", "message" => "Authentication required."]);
     exit();
@@ -23,13 +37,6 @@ function getUserData($db, $id) {
         }
     }
     return false;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    header("Content-Length: 0"); 
-    header("Access-Control-Allow-Headers: Content-Type");
-    http_response_code(204);
-    exit(0);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -54,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $sql->close();
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $json_input = file_get_contents("php://input");
     $data = json_decode($json_input, true);
 
@@ -110,5 +116,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'message' => 'Method not supported.'
     ]);
 }
-$db->close();*/
+$db->close();
 ?>

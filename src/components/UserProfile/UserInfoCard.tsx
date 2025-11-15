@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -35,20 +35,22 @@ export default function UserInfoCard() {
   });
 
   const API_URL = "http://localhost/wbadmin/api/update_profile.php";
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const fetchData = async () => {
       try {
-        let response: Response;
-        response = await fetch(API_URL, {
+        const response = await fetch(API_URL, {
           credentials: "include"
         });
 
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch user data. Status: ${response.status}`
-          );
+          throw new Error(`Failed to fetch user data. Status: ${response.status}`);
         }
+
         const result: ApiResponse = await response.json();
 
         if (result.status === "success" && result.user) {
@@ -61,8 +63,9 @@ export default function UserInfoCard() {
           setError(result.message || "Failed to retrieve user data.");
           setFetchedUser(null);
         }
+
       } catch (e: any) {
-        console.error("Fetching error: ", e);
+        console.error("Fetching error:", e);
         setError(`A network or parsing error occurred: ${e.message}`);
       } finally {
         setIsLoading(false);
@@ -98,7 +101,8 @@ export default function UserInfoCard() {
     if (!formData.name.trim() || !formData.email.trim()) {
       setSaveError("Name and Email cannot be empty.");
       return;
-  }
+    }
+
     setIsSaving(true);
     setSaveError(null);
     setSaveSuccess(null);
@@ -107,6 +111,7 @@ export default function UserInfoCard() {
       let response: Response;
       response = await fetch(API_URL, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

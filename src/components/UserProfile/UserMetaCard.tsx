@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface UserData {
   id: number;
@@ -20,11 +20,17 @@ export default function UserMetaCard() {
   const [error, setError] = useState<string | null>(null);
 
   const API_URL = "http://localhost/wbadmin/api/update_profile.php";
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const fetchData = async () => {
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+          credentials: "include"
+        });
 
         if (!response.ok) {
           throw new Error(
