@@ -1,16 +1,157 @@
+import { useState, useEffect, useCallback } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 
+interface UserData {
+  id: number;
+  username: string;
+  name: string;
+  role_code: string;
+  email: string;
+}
+
+interface ApiResponse {
+  status: "success" | "error";
+  user?: UserData;
+  message?: string;
+}
+
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+
+  const [fetchedUser, setFetchedUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+  });
+
+  const API_URL = "http://localhost/wbadmin/api/update_profile.php";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let response: Response;
+        response = await fetch(API_URL, {
+          credentials: "include"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch user data. Status: ${response.status}`
+          );
+        }
+        const result: ApiResponse = await response.json();
+
+        if (result.status === "success" && result.user) {
+          setFetchedUser(result.user);
+          setFormData({
+            name: result.user.name,
+            email: result.user.email,
+          });
+        } else {
+          setError(result.message || "Failed to retrieve user data.");
+          setFetchedUser(null);
+        }
+      } catch (e: any) {
+        console.error("Fetching error: ", e);
+        setError(`A network or parsing error occurred: ${e.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSaveError(null); // Clear errors on input change
+    setSaveSuccess(null); // Clear success message on input change
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (isOpen && fetchedUser) {
+      // Reset formData to the current fetchedUser values when modal opens
+      setFormData({
+        name: fetchedUser.name,
+        email: fetchedUser.email,
+      });
+      setSaveError(null);
+      setSaveSuccess(null);
+    }
+  }, [isOpen, fetchedUser]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSaving || !fetchedUser) return;
+
+    if (!formData.name.trim() || !formData.email.trim()) {
+      setSaveError("Name and Email cannot be empty.");
+      return;
+  }
+    setIsSaving(true);
+    setSaveError(null);
+    setSaveSuccess(null);
+
+    try {
+      let response: Response;
+      response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result: ApiResponse = await response.json();
+
+      if (result.status === "success" && result.user) {
+        setFetchedUser(result.user);
+        setSaveSuccess(result.message || "Profile updated successfully!");
+        setTimeout(() => closeModal(), 1500);
+      } else {
+        setSaveError(result.message || "Failed to save profile changes.");
+      }
+    } catch (e: any) {
+      console.error("Saving error: ", e);
+      setSaveError(`A network error occurred while saving: ${e.message}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const displayUser = fetchedUser;
+
+  if (isLoading) {
+    return (
+      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 text-center">
+        <p className="text-gray-500 dark:text-gray-400">
+          Loading personal information...
+        </p>
+      </div>
+    );
+  }
+
+  if (error || !displayUser) {
+    return (
+      <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 text-center">
+        <p className="text-red-500">
+          Error: {error || "Failed to load personal profile."}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -19,49 +160,21 @@ export default function UserInfoCard() {
             Personal Information
           </h4>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+          <div className="flex flex-col space-y-7">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                First Name
+                Name
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Musharof
+                {displayUser.name}
               </p>
             </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Last Name
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Chowdhury
-              </p>
-            </div>
-
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Email address
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                randomuser@pimjo.com
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Phone
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Team Manager
+                {displayUser.email}
               </p>
             </div>
           </div>
@@ -99,71 +212,41 @@ export default function UserInfoCard() {
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
               Update your details to keep your profile up-to-date.
             </p>
+            {saveError && (
+              <p className="text-sm text-red-500 mb-4">{saveError}</p>
+            )}
+            {/* Display save success */}
+            {saveSuccess && (
+              <p className="text-sm text-green-500 mb-4">{saveSuccess}</p>
+            )}
           </div>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleSave}>
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
-              <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
-
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div>
-                    <Label>Facebook</Label>
-                    <Input
-                      type="text"
-                      value="https://www.facebook.com/PimjoHQ"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>X.com</Label>
-                    <Input type="text" value="https://x.com/PimjoHQ" />
-                  </div>
-
-                  <div>
-                    <Label>Linkedin</Label>
-                    <Input
-                      type="text"
-                      value="https://www.linkedin.com/company/pimjo"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Instagram</Label>
-                    <Input type="text" value="https://instagram.com/PimjoHQ" />
-                  </div>
-                </div>
-              </div>
               <div className="mt-7">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Personal Information
                 </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" value="Musharof" />
+                <div className="flex flex-col space-y-5">
+                  <div className="w-full">
+                    <Label>Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
                   </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" value="Chowdhury" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
+                  <div className="w-full">
                     <Label>Email Address</Label>
-                    <Input type="text" value="randomuser@pimjo.com" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" value="+09 363 398 46" />
-                  </div>
-
-                  <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
               </div>
@@ -172,8 +255,8 @@ export default function UserInfoCard() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button size="sm" type="submit" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>

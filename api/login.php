@@ -1,12 +1,6 @@
 <?php
-session_start();
+require_once 'session.php';
 require_once 'db_connect.php';
-
-// Send JSON response
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: http://localhost:5173"); // Vite port
-header("Access-Control-Allow-Credentials: true"); // allow cookies/sessions
-header("Access-Control-Allow-Headers: Content-Type");
 
 // Read JSON input
 $input = json_decode(file_get_contents("php://input"), true);
