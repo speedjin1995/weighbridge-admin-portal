@@ -3,6 +3,7 @@ import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
+import ChangePassword from "./pages/ChangePassword";
 import Videos from "./pages/UiElements/Videos";
 import Images from "./pages/UiElements/Images";
 import Alerts from "./pages/UiElements/Alerts";
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<UserProfiles />} />
+            <Route path="change-password" element={<ChangePassword/>} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="companies" element={<Companies />} />
             <Route path="blank" element={<Blank />} />
