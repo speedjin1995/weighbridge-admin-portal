@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { useNavigate } from "react-router-dom";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
@@ -9,7 +9,7 @@ export default function ChangePasswordForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  //const [isChecked, setIsChecked] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -26,14 +26,14 @@ export default function ChangePasswordForm() {
 
     try {
       const API_URL = "http://localhost/wbadmin/api/change_password.php";
-      const res = await fetch("", {
+      const res = await fetch(API_URL, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            orginalPassword: oldPassword,
-            newPassword: newPassword,
-            confirmNewPassword: confirmNewPassword
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+          confirmNewPassword: confirmNewPassword
         }),
       });
 
