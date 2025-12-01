@@ -21,6 +21,8 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Users from "./pages/Users/Users";
+import Products from "./pages/Products/Products";
 
 export default function App() {
   return (
@@ -47,6 +49,8 @@ export default function App() {
             <Route path="videos" element={<Videos />} />
             <Route path="line-chart" element={<LineChart />} />
             <Route path="bar-chart" element={<BarChart />} />
+            <Route path="products" element={<Products />} />
+            <Route path="users" element={<Users />} />
           </Route>
         </Route>
 
