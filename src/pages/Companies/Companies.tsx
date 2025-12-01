@@ -1,40 +1,20 @@
-import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
-import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "../../components/ecommerce/StatisticsChart";
-import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
-import RecentOrders from "../../components/ecommerce/RecentOrders";
-import DemographicCard from "../../components/ecommerce/DemographicCard";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
+import CompanyTableOne from "../../components/tables/CompanyTables/CompanyTableOne";
 
 export default function Companies() {
   return (
     <>
       <PageMeta
-        title="Weighbridge | Admin Portal"
-        description="This is weighbridge system admin portal"
+        title="Companies Management | Admin Portal"
+        description="This is companies management page for admin portal"
       />
-      <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
-
-          <MonthlySalesChart />
-        </div>
-
-        <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
-        </div>
-
-        <div className="col-span-12">
-          <StatisticsChart />
-        </div>
-
-        <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
-        </div>
-
-        <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
-        </div>
+      <PageBreadcrumb pageTitle="Companies" />
+      <div className="space-y-6">
+        <ComponentCard title="Companies">
+          <CompanyTableOne />
+        </ComponentCard>
       </div>
     </>
   );
