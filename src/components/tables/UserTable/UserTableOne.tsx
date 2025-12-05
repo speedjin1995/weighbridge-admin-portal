@@ -65,7 +65,7 @@ export default function BasicTableOne() {
                 <TableCell isHeader className="text-center">User</TableCell>
                 <TableCell isHeader className="text-center">Role</TableCell>
                 <TableCell isHeader className="text-center">Email</TableCell>
-                <TableCell isHeader className="text-right pr-6">Actions</TableCell>
+                <TableCell isHeader className="text-center">Actions</TableCell>
               </TableRow>
             </TableHeader>
 
@@ -100,8 +100,8 @@ export default function BasicTableOne() {
                   <TableCell className="text-center">{user.email}</TableCell>
 
                   {/* ACTIONS */}
-                  <TableCell className="text-right pr-6">
-                    <div className="flex justify-end gap-4">
+                  <TableCell className="text-center">
+                    <div className="flex justify-center gap-4">
 
                       <button
                         onClick={() => handleEdit(user.id)}
