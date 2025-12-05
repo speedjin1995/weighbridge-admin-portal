@@ -5,6 +5,7 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import { api } from "../../config/api";
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function SignInForm() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost/wbadmin/api/login.php", {
+      const res = await fetch(api("/login.php"), {
         method: "POST",
         credentials: "include", // <-- VERY IMPORTANT (for PHP sessions)
         headers: { "Content-Type": "application/json" },

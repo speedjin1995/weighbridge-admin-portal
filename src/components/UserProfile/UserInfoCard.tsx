@@ -4,6 +4,7 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { api } from "../../config/api";
 
 interface UserData {
   id: number;
@@ -34,7 +35,6 @@ export default function UserInfoCard() {
     email: "",
   });
 
-  const API_URL = "http://localhost/wbadmin/api/update_profile.php";
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function UserInfoCard() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(api("/update_profile.php"), {
           credentials: "include"
         });
 
@@ -109,7 +109,7 @@ export default function UserInfoCard() {
 
     try {
       let response: Response;
-      response = await fetch(API_URL, {
+      response = await fetch(api("/update_profile.php"), {
         method: "POST",
         credentials: "include",
         headers: {
