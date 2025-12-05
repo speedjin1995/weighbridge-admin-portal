@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 
 interface ModalProps {
   open: boolean;
@@ -15,9 +16,9 @@ export default function Modal({
 }: ModalProps) {
   if (!open) return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-50 flex justify-center items-center bg-black/40"
+      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black/40"
       onClick={onClose}
     >
       <div
@@ -26,6 +27,7 @@ export default function Modal({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body // <-- THIS IS THE FIX
   );
 }
