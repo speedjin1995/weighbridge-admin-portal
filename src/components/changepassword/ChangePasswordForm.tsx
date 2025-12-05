@@ -4,6 +4,7 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
+import { api } from "../../config/api";
 
 export default function ChangePasswordForm() {
   const navigate = useNavigate();
@@ -25,8 +26,7 @@ export default function ChangePasswordForm() {
     }
 
     try {
-      const API_URL = "http://localhost/wbadmin/api/change_password.php";
-      const res = await fetch(API_URL, {
+      const res = await fetch(api("/change_password.php"), {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

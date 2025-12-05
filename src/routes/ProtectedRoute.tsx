@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { api } from "../config/api";
 
 export default function ProtectedRoute() {
   const [auth, setAuth] = useState<null | boolean>(null);
 
   useEffect(() => {
-    fetch("http://localhost/wbadmin/api/check_session.php", {
+    fetch(api("/check_session.php"), {
       credentials: "include",
     })
       .then((res) => res.json())

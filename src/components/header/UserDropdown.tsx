@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../config/api";
 
 export default function UserDropdown() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function UserDropdown() {
   }
 
   const handleLogout = async () => {
-    await fetch("http://localhost/wbadmin/api/logout.php", {
+    await fetch(api("/logout.php"), {
       method: "POST",
       credentials: "include"
     });
