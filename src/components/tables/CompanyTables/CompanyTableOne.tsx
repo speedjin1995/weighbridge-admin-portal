@@ -7,7 +7,6 @@ import {
   TableRow,
 } from "../../ui/table";
 
-import Badge from "../../ui/badge/Badge";
 import { api } from "../../../config/api";
 
 interface Company {
@@ -27,8 +26,21 @@ interface Company {
 
 export default function BasicTableOne() {
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const load = () => {
+    fetch(api("/load_companies.php"), { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") setCompanies(data.data);
+      })
+      .catch(() => console.log("Error loading companies"));
+  };
+
+  useEffect(() => {
+    load();
+    window.addEventListener("reload-companies", load);
+    return () => window.removeEventListener("reload-companies", load);
+  }, []);
 
   const handleEdit = (id: number) => {
     window.dispatchEvent(new CustomEvent("open-edit-user", { detail: id }));
@@ -45,88 +57,9 @@ export default function BasicTableOne() {
     });
 
     const data = await res.json();
-    if (data.status === "success") {
-      // Reload companies
-      const fetchCompanies = async () => {
-        try {
-          setLoading(true);
-          const url = api("/load_companies.php");
-
-          const response = await fetch(url, {
-            credentials: "include",
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch companies");
-          }
-
-          const data = await response.json();
-
-          if (data.status === "success") {
-            setCompanies(data.data);
-          } else {
-            throw new Error("Invalid response from server");
-          }
-        } catch (err) {
-          console.error("Error fetching companies:", err);
-          setError(err instanceof Error ? err.message : "An error occurred");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchCompanies();
-    } else {
-      alert(data.message);
-    }
+    if (data.status === "success") load();
+    else alert(data.message);
   };
-
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        setLoading(true);
-        const url = api("/load_companies.php");
-
-        const response = await fetch(url, {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch companies");
-        }
-
-        const data = await response.json();
-
-        if (data.status === "success") {
-          setCompanies(data.data);
-        } else {
-          throw new Error("Invalid response from server");
-        }
-      } catch (err) {
-        console.error("Error fetching companies:", err);
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCompanies();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">Loading companies...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
