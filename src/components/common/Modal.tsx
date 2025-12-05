@@ -18,16 +18,16 @@ export default function Modal({
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black/40"
+      className="fixed inset-0 z-[999999] flex justify-center items-center bg-black/40"
       onClick={onClose}
     >
       <div
-        className={`bg-white dark:bg-gray-900 rounded-lg p-6 shadow-xl ${width}`}
+        className={`bg-white dark:bg-gray-900 rounded-lg p-6 shadow-xl max-h-[90vh] overflow-y-auto ${width}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
     </div>,
-    document.body // <-- THIS IS THE FIX
+    document.body
   );
 }
