@@ -55,6 +55,5 @@ while ($row = $result->fetch_assoc()) {
 echo json_encode([
     "status" => "success",
     "data" => $users,
-    "message" => $allowed_origin
 ]);
 $db->close();
