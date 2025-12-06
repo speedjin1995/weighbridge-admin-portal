@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import Badge from "../../ui/badge/Badge";
+import Spinner from "../../ui/spinner/Spinner";
 import { api } from "../../../config/api";
 
 interface User {
@@ -20,14 +21,19 @@ interface User {
 
 export default function BasicTableOne() {
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
+    setLoading(true);
     fetch(api("/load_users.php"), { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") setUsers(data.data);
+        if (data.status === "success") {
+          setUsers(data.data);
+        }
       })
-      .catch(() => console.log("Error loading users"));
+      .catch(() => console.log("Error loading users"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -41,7 +47,9 @@ export default function BasicTableOne() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
 
     const res = await fetch(api("/delete_user.php"), {
       method: "POST",
@@ -51,9 +59,20 @@ export default function BasicTableOne() {
     });
 
     const data = await res.json();
-    if (data.status === "success") load();
-    else alert(data.message);
+    if (data.status === "success") {
+      load();
+    } else {
+      alert(data.message);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -65,7 +84,7 @@ export default function BasicTableOne() {
                 <TableCell isHeader className="text-center">User</TableCell>
                 <TableCell isHeader className="text-center">Role</TableCell>
                 <TableCell isHeader className="text-center">Email</TableCell>
-                <TableCell isHeader className="text-right pr-6">Actions</TableCell>
+                <TableCell isHeader className="text-center">Actions</TableCell>
               </TableRow>
             </TableHeader>
 
@@ -100,8 +119,8 @@ export default function BasicTableOne() {
                   <TableCell className="text-center">{user.email}</TableCell>
 
                   {/* ACTIONS */}
-                  <TableCell className="text-right pr-6">
-                    <div className="flex justify-end gap-4">
+                  <TableCell className="text-center">
+                    <div className="flex justify-center gap-4">
 
                       <button
                         onClick={() => handleEdit(user.id)}
