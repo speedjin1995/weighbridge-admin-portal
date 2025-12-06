@@ -67,7 +67,7 @@ export default function Companies() {
       {/* EDIT USER MODAL */}
       <EditCompanyModal
         open={editOpen}
-        userId={editId}
+        companyId={editId}
         onClose={() => setEditOpen(false)}
         onUpdated={() => window.dispatchEvent(new Event("reload-companies"))}
       />
