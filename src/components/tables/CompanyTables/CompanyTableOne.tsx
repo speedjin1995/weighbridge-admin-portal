@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table";
-
+import Spinner from "../../ui/spinner/Spinner";
 import { api } from "../../../config/api";
 
 interface Company {
@@ -26,14 +26,19 @@ interface Company {
 
 export default function BasicTableOne() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
+    setLoading(true);
     fetch(api("/load_companies.php"), { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") setCompanies(data.data);
+        if (data.status === "success") {
+          setCompanies(data.data);
+        }
       })
-      .catch(() => console.log("Error loading companies"));
+      .catch(() => console.log("Error loading companies"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -47,7 +52,9 @@ export default function BasicTableOne() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this company?")) return;
+    if (!confirm("Are you sure you want to delete this company?")) {
+      return;
+    }
 
     const res = await fetch(api("/delete_company.php"), {
       method: "POST",
@@ -57,9 +64,20 @@ export default function BasicTableOne() {
     });
 
     const data = await res.json();
-    if (data.status === "success") load();
-    else alert(data.message);
+    if (data.status === "success") {
+      load();
+    } else {
+      alert(data.message);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">

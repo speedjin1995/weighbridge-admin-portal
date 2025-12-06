@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "../../ui/table";
 import Badge from "../../ui/badge/Badge";
+import Spinner from "../../ui/spinner/Spinner";
 import { api } from "../../../config/api";
 
 interface User {
@@ -20,14 +21,17 @@ interface User {
 
 export default function BasicTableOne() {
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
+    setLoading(true);
     fetch(api("/load_users.php"), { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") setUsers(data.data);
       })
-      .catch(() => console.log("Error loading users"));
+      .catch(() => console.log("Error loading users"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -54,6 +58,14 @@ export default function BasicTableOne() {
     if (data.status === "success") load();
     else alert(data.message);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Modal from "../../components/common/Modal";
 import { api } from "../../config/api";
 import Select from "react-select";
+import Spinner from "../../components/ui/spinner/Spinner";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,8 @@ export default function EditCompanyModal({
 }: Props) {
   const [data, setData] = useState<any>(null);
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!companyId) return;
@@ -49,21 +52,26 @@ export default function EditCompanyModal({
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
 
-    const res = await fetch(api("/update_company.php"), {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(api("/update_company.php"), {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const d = await res.json();
-    if (d.status === "success") {
-      alert(d.message);
-      onUpdated();
-      onClose();
-    } else {
-      alert(d.message);
+      const d = await res.json();
+      if (d.status === "success") {
+        alert(d.message);
+        onUpdated();
+        onClose();
+      } else {
+        alert(d.message);
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -88,7 +96,18 @@ export default function EditCompanyModal({
     : [];
 
   return (
-    <Modal open={open} onClose={onClose} width="w-[900px]">
+    <>
+      {/* Full Screen Loading Overlay */}
+      {saving && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999]">
+          <div className="bg-white p-6 rounded-lg flex items-center gap-3">
+            <Spinner size="lg" />
+            <span className="text-lg font-medium">Updating company...</span>
+          </div>
+        </div>
+      )}
+      
+      <Modal open={open && !saving} onClose={onClose} width="w-[900px]">
       <form onSubmit={handleSave} className="flex flex-col h-full max-h-[70vh]">
         <div className="flex-shrink-0 pb-4 border-b">
           <h2 className="text-xl font-semibold">Edit Company</h2>
@@ -259,5 +278,6 @@ export default function EditCompanyModal({
         </div>
       </form>
     </Modal>
+    </>
   );
 }
