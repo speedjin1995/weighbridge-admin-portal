@@ -28,7 +28,9 @@ export default function BasicTableOne() {
     fetch(api("/load_users.php"), { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") setUsers(data.data);
+        if (data.status === "success") {
+          setUsers(data.data);
+        }
       })
       .catch(() => console.log("Error loading users"))
       .finally(() => setLoading(false));
@@ -45,7 +47,9 @@ export default function BasicTableOne() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
 
     const res = await fetch(api("/delete_user.php"), {
       method: "POST",
@@ -55,8 +59,11 @@ export default function BasicTableOne() {
     });
 
     const data = await res.json();
-    if (data.status === "success") load();
-    else alert(data.message);
+    if (data.status === "success") {
+      load();
+    } else {
+      alert(data.message);
+    }
   };
 
   if (loading) {

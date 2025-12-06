@@ -29,7 +29,6 @@ export default function EditCompanyModal({
 }: Props) {
   const [data, setData] = useState<any>(null);
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
