@@ -27,8 +27,10 @@ while ($row = $result->fetch_assoc()) {
                 $product_result = $product_stmt->get_result();
                 
                 $productArray = array();
+                $num = 1; // Start numbering from 1
                 while($product_row = $product_result->fetch_assoc()) {
-                    $productArray[] = $product_row['product_name'];
+                    $productArray[] = $num . '. ' . $product_row['product_name'];
+                    $num++;
                 }
                 $productNames = implode("\n", $productArray);
                 $product_stmt->close();
