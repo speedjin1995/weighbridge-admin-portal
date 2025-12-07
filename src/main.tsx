@@ -11,7 +11,7 @@ import Footer from "./components/footer/Footer.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter> 
+    <BrowserRouter basename="/wb"> 
       <ThemeProvider>
         <AppWrapper>
           <App />
