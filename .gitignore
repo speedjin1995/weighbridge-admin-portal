@@ -7,3 +7,6 @@ yarn-error.log*
 # Vite
 dist/
 .vite/
+
+# Ignore composer dependencies
+/vendor
