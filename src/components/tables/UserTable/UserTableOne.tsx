@@ -25,7 +25,7 @@ export default function BasicTableOne() {
 
   const load = () => {
     setLoading(true);
-    fetch(api("/load_users.php"), { credentials: "include" })
+    fetch(api("/load_users.php"), { credentials: "include", cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
